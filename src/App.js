@@ -1,6 +1,9 @@
+// App.js
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
+import Input from "./components/Input/Input";
+import PostList from "./components/PostList/PostList";
 
 function App() {
   const [searchInput, setSearchInput] = useState("");
@@ -15,7 +18,13 @@ function App() {
   const getPosts = async () => {
     try {
       const response = await axios.get(Base_Url);
-      setPosts(response.data);
+      const modifiedData = response.data.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      }));
+      setPosts(modifiedData);
     } catch (error) {
       console.log("Error", error);
     }
@@ -31,16 +40,8 @@ function App() {
 
   return (
     <>
-      <input
-        className="input"
-        type="text"
-        placeholder="Search..."
-        onChange={handleChange}
-        value={searchInput}
-      />
-      {filteredPosts.map((post) => (
-        <div key={post.id}>{post.name}</div>
-      ))}
+      <Input value={searchInput} onChange={handleChange} />
+      <PostList posts={filteredPosts} />
     </>
   );
 }
